@@ -1,10 +1,15 @@
+import Navbar from "./components/Navbar";
+import LandingPage from "./sections/LandingPage";
 
 
 export default function Home() {
   return (
     <div>
-       <h1 className="text-3xl text-blue-500 font-bold underline">
-      Hello world!
+      <div className="pb-16">
+        <Navbar/>
+      </div>
+       <h1>
+      <LandingPage/>
     </h1>
     </div>
   );
