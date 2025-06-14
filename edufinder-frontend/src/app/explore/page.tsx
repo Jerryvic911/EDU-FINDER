@@ -15,7 +15,9 @@ function ExplorePage() {
   const [filteredSchools, setFilteredSchools] = useState<School[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filterBy, setFilterBy] = useState<'name' | 'location' | 'cutOffMark' | 'courses'>('name');
+  const [filterBy, setFilterBy] = useState<FilterOption>('name');
+
+  type FilterOption = 'name' | 'location' | 'cutOffMark' | 'courses';
 
   useEffect(() => {
     const fetchSchools = async () => {
@@ -79,7 +81,7 @@ function ExplorePage() {
 
         <select
           value={filterBy}
-          onChange={(e) => setFilterBy(e.target.value as any)}
+          onChange={(e) => setFilterBy(e.target.value as FilterOption)}
           className="px-4 py-2 border border-gray-300 rounded-lg"
         >
           <option value="name">Name</option>
