@@ -21,20 +21,42 @@ export default function EditSchoolPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [school, setSchool] = useState<School | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
   useEffect(() => {
     if (!id) return;
+     if (!token) {
+      router.push('/login'); // Redirect to login page
+      return;
+    }
 
-    const fetchSchool = async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/schools/${id}`);
-      const data = await res.json();
-      setSchool(data);
+     const fetchSchool = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/schools/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error('Unauthorized or Not Found');
+
+        const data = await res.json();
+        setSchool(data);
+      } catch (err) {
+        console.error(err);
+        router.push('/unauthorized'); // Optional: redirect to error page
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchSchool();
-  }, [id]);
+  }, [id, router, token]);
+
+  if (loading) return <p className="text-center mt-10">Checking authentication...</p>;
+  if (!school) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

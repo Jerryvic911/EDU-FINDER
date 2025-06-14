@@ -19,10 +19,16 @@ export default function AddSchoolPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
- const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  const { name, value } = e.target;
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const { name, value, type } = e.target;
 
-  if (name === 'hostel' || name === 'feeding') {
+  if (type === 'checkbox') {
+    const target = e.target as HTMLInputElement; // 👈 Narrow the type
+    setFormData((prev) => ({
+      ...prev,
+      [name]: target.checked,
+    }));
+  } else if (name === 'hostel' || name === 'feeding') {
     setFormData((prev) => ({
       ...prev,
       accommodation: {
@@ -37,6 +43,8 @@ export default function AddSchoolPage() {
     }));
   }
 };
+
+
 
 
 
