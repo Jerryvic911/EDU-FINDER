@@ -28,7 +28,7 @@ const decoded = jwtDecode<{ sub: string }>(data.access_token);
         localStorage.setItem('token', data.access_token); // ✅ Correct key
         localStorage.setItem('userId', decoded.sub);       // ✅ Use `sub` (user ID)
 
-        router.push('/explore');
+        router.push('/admin');
       } else {
         alert(data.message || 'Login failed');
       }

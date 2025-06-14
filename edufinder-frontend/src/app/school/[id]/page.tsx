@@ -5,58 +5,34 @@ interface Props {
 }
 
 async function getSchool(id: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/schools/${id}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/schools/${id}`, {
+    cache: 'no-store',
+  });
+
   if (!res.ok) {
-    throw new Error('School not found');
+    throw new Error('Failed to fetch school');
   }
+
   return res.json();
 }
 
 export default async function SchoolDetailPage({ params }: Props) {
+  // ✅ THIS IS OK NOW
   const school = await getSchool(params.id);
 
   return (
     <div className="p-6 min-h-screen bg-white max-w-4xl mx-auto">
-      <h1 className="text-4xl font-bold mb-4">{school.name}</h1>
-      <p className="text-lg text-gray-700 mb-2"><strong>Location:</strong> {school.location}</p>
+      <h1 className="text-3xl font-bold mb-4">{school.name}</h1>
+      <p className="text-gray-600 mb-2">{school.location}</p>
+      <p className="mb-4">{school.aboutSchool}</p>
 
-      <div className="mt-4">
-        <h2 className="text-2xl font-semibold mb-2">About School</h2>
-        <p className="text-gray-600">{school.aboutSchool || 'No information available.'}</p>
-      </div>
-
-      <div className="mt-6">
-        <h2 className="text-2xl font-semibold mb-2">School Fees</h2>
-        <p className="text-gray-700">₦{school.schoolFees.toLocaleString()}</p>
-      </div>
-
-      <div className="mt-6">
-        <h2 className="text-2xl font-semibold mb-2">Accommodation</h2>
-        <p className="text-gray-700">
-          Hostel: ₦{school.accommodation?.hostel?.toLocaleString() || 0}
-        </p>
-        <p className="text-gray-700">
-          Feeding: ₦{school.accommodation?.feeding?.toLocaleString() || 0}
-        </p>
-      </div>
-
-      <div className="mt-6">
-        <h2 className="text-2xl font-semibold mb-2">Courses Offered</h2>
-        <ul className="list-disc list-inside text-gray-700">
-          {school.courses?.map((course: string, index: number) => (
-            <li key={index}>{course}</li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="mt-6">
-        <h2 className="text-2xl font-semibold mb-2">Admission Info</h2>
-        <p className="text-gray-700">
-          Cut-Off Mark: <strong>{school.cutOffMark}</strong>
-        </p>
-        <p className="text-gray-700">
-          Post-UTME: <strong>{school.hasPostUtme ? 'Yes' : 'No'}</strong>
-        </p>
+      <div className="grid grid-cols-2 gap-4">
+        <p><strong>Cut Off Mark:</strong> {school.cutOffMark}</p>
+        <p><strong>School Fees:</strong> ₦{school.schoolFees}</p>
+        <p><strong>Hostel:</strong> ₦{school.accommodation?.hostel}</p>
+        <p><strong>Feeding:</strong> ₦{school.accommodation?.feeding}</p>
+        <p><strong>Courses:</strong> {school.courses?.join(', ')}</p>
+        <p><strong>Has Post-UTME:</strong> {school.hasPostUtme ? 'Yes' : 'No'}</p>
       </div>
     </div>
   );
