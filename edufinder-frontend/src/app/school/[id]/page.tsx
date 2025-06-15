@@ -1,3 +1,4 @@
+import Navbar from '@/app/components/Navbar';
 import React from 'react';
 
 interface Props {
@@ -17,22 +18,53 @@ async function getSchool(id: string) {
 }
 
 export default async function SchoolDetailPage({ params }: Props) {
-  // ✅ THIS IS OK NOW
   const school = await getSchool(params.id);
 
   return (
-    <div className="p-6 min-h-screen bg-white max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-4">{school.name}</h1>
-      <p className="text-gray-600 mb-2">{school.location}</p>
-      <p className="mb-4">{school.aboutSchool}</p>
+    <div className="min-h-screen px-4 pt-20 pb-12 bg-gradient-to-br from-blue-50 to-white">
+      <Navbar/>
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-6 sm:p-10">
+        <h1 className="text-3xl sm:text-4xl font-bold text-blue-900 mb-2">{school.name}</h1>
+        <p className="text-gray-600 mb-1 text-lg">📍 {school.location}</p>
+        <p className="text-gray-700 mt-4 mb-6 leading-relaxed">{school.aboutSchool}</p>
 
-      <div className="grid grid-cols-2 gap-4">
-        <p><strong>Cut Off Mark:</strong> {school.cutOffMark}</p>
-        <p><strong>School Fees:</strong> ₦{school.schoolFees}</p>
-        <p><strong>Hostel:</strong> ₦{school.accommodation?.hostel}</p>
-        <p><strong>Feeding:</strong> ₦{school.accommodation?.feeding}</p>
-        <p><strong>Courses:</strong> {school.courses?.join(', ')}</p>
-        <p><strong>Has Post-UTME:</strong> {school.hasPostUtme ? 'Yes' : 'No'}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="bg-blue-100 p-4 rounded-xl">
+            <p className="text-sm text-gray-600">Cut-off Mark</p>
+            <p className="text-xl font-semibold text-blue-800">{school.cutOffMark}</p>
+          </div>
+          <div className="bg-green-100 p-4 rounded-xl">
+            <p className="text-sm text-gray-600">School Fees</p>
+            <p className="text-xl font-semibold text-green-800">₦{school.schoolFees}</p>
+          </div>
+          <div className="bg-yellow-100 p-4 rounded-xl">
+            <p className="text-sm text-gray-600">Hostel</p>
+            <p className="text-xl font-semibold text-yellow-800">₦{school.accommodation?.hostel}</p>
+          </div>
+          <div className="bg-pink-100 p-4 rounded-xl">
+            <p className="text-sm text-gray-600">Feeding</p>
+            <p className="text-xl font-semibold text-pink-800">₦{school.accommodation?.feeding}</p>
+          </div>
+          <div className="bg-indigo-100 p-4 rounded-xl col-span-1 sm:col-span-2">
+            <p className="text-sm text-gray-600 mb-2">Courses Offered</p>
+            <ul className="list-disc list-inside text-base font-medium text-indigo-800 space-y-1">
+              {school.courses?.length > 0 ? (
+                school.courses.map((course: string, index: number) => (
+                  <li key={index}>{course}</li>
+                ))
+              ) : (
+                <li>N/A</li>
+              )}
+            </ul>
+          </div>
+
+          <div className="bg-gray-100 p-4 rounded-xl">
+            <p className="text-sm text-gray-600">Post-UTME Required</p>
+            <p className="text-lg font-semibold text-gray-800">
+              {school.hasPostUtme ? '✅ Yes' : '❌ No'}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

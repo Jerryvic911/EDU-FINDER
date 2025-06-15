@@ -27,12 +27,12 @@ export default function EditSchoolPage() {
 
   useEffect(() => {
     if (!id) return;
-     if (!token) {
-      router.push('/login'); // Redirect to login page
+    if (!token) {
+      router.push('/login');
       return;
     }
 
-     const fetchSchool = async () => {
+    const fetchSchool = async () => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/schools/${id}`, {
           headers: {
@@ -46,7 +46,7 @@ export default function EditSchoolPage() {
         setSchool(data);
       } catch (err) {
         console.error(err);
-        router.push('/unauthorized'); // Optional: redirect to error page
+        router.push('/unauthorized');
       } finally {
         setLoading(false);
       }
@@ -55,17 +55,15 @@ export default function EditSchoolPage() {
     fetchSchool();
   }, [id, router, token]);
 
-  if (loading) return <p className="text-center mt-10">Checking authentication...</p>;
-  if (!school) return null;
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-
     setSchool((prev) =>
-      prev ? {
-        ...prev,
-        [name]: name === 'cutOffMark' || name === 'schoolFees' ? Number(value) : value
-      } : null
+      prev
+        ? {
+            ...prev,
+            [name]: name === 'cutOffMark' || name === 'schoolFees' ? Number(value) : value,
+          }
+        : null
     );
   };
 
@@ -99,7 +97,7 @@ export default function EditSchoolPage() {
 
       if (res.ok) {
         alert('School updated successfully!');
-        router.push('/admin'); // go back to dashboard
+        router.push('/admin');
       } else {
         const error = await res.json();
         alert(`Error: ${error.message}`);
@@ -109,21 +107,79 @@ export default function EditSchoolPage() {
     }
   };
 
-  if (!school) return <p>Loading school data...</p>;
+  if (loading) return <p className="text-center mt-10">Checking authentication...</p>;
+  if (!school) return <p className="text-center mt-10">School not found.</p>;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg mt-10 rounded-xl">
-      <h2 className="text-2xl font-bold mb-4">Edit School</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input name="name" value={school.name} onChange={handleChange} className="input" required />
-        <input name="location" value={school.location} onChange={handleChange} className="input" required />
-        <textarea name="aboutSchool" value={school.aboutSchool} onChange={handleChange} className="input" rows={3} />
-        <input name="cutOffMark" type="number" value={school.cutOffMark} onChange={handleChange} className="input" />
-        <input name="schoolFees" type="number" value={school.schoolFees} onChange={handleChange} className="input" />
+    <div className="max-w-3xl mx-auto p-6 mt-10 bg-white rounded-2xl shadow-lg">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-blue-700">Edit School Details</h2>
 
-        <div className="flex gap-4">
-          <input name="hostel" type="number" value={school.accommodation.hostel} onChange={handleAccommodationChange} className="input" />
-          <input name="feeding" type="number" value={school.accommodation.feeding} onChange={handleAccommodationChange} className="input" />
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6">
+        <input
+          name="name"
+          value={school.name}
+          onChange={handleChange}
+          placeholder="School Name"
+          className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
+        />
+
+        <input
+          name="location"
+          value={school.location}
+          onChange={handleChange}
+          placeholder="Location"
+          className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
+        />
+
+        <textarea
+          name="aboutSchool"
+          value={school.aboutSchool}
+          onChange={handleChange}
+          placeholder="About the School"
+          rows={4}
+          className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input
+            name="cutOffMark"
+            type="number"
+            value={school.cutOffMark}
+            onChange={handleChange}
+            placeholder="Cut-off Mark"
+            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+
+          <input
+            name="schoolFees"
+            type="number"
+            value={school.schoolFees}
+            onChange={handleChange}
+            placeholder="School Fees"
+            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input
+            name="hostel"
+            type="number"
+            value={school.accommodation.hostel}
+            onChange={handleAccommodationChange}
+            placeholder="Hostel Fee"
+            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+
+          <input
+            name="feeding"
+            type="number"
+            value={school.accommodation.feeding}
+            onChange={handleAccommodationChange}
+            placeholder="Feeding Fee"
+            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
         </div>
 
         <input
@@ -131,25 +187,32 @@ export default function EditSchoolPage() {
           type="text"
           value={school.courses.join(', ')}
           onChange={(e) =>
-            setSchool((prev) => prev ? { ...prev, courses: e.target.value.split(',').map(c => c.trim()) } : null)
+            setSchool((prev) =>
+              prev ? { ...prev, courses: e.target.value.split(',').map((c) => c.trim()) } : null
+            )
           }
-          className="input"
-          placeholder="Courses separated by commas"
+          placeholder="Courses (comma separated)"
+          className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
-        <label className="block">
+        <label className="flex items-center space-x-3">
           <input
             type="checkbox"
             checked={school.hasPostUtme}
             onChange={(e) =>
-              setSchool((prev) => prev ? { ...prev, hasPostUtme: e.target.checked } : null)
+              setSchool((prev) => (prev ? { ...prev, hasPostUtme: e.target.checked } : null))
             }
-            className="mr-2"
+            className="h-5 w-5 text-blue-600"
           />
-          Has Post-UTME?
+          <span className="text-sm text-gray-700">Has Post-UTME?</span>
         </label>
 
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save Changes</button>
+        <button
+          type="submit"
+          className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
+        >
+          Save Changes
+        </button>
       </form>
     </div>
   );
