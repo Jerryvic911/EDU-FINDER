@@ -1,6 +1,11 @@
+export const dynamic = 'force-dynamic';
+
 import Navbar from '@/app/components/Navbar';
 import React from 'react';
 
+interface Props {
+  params: { id: string };
+}
 
 async function getSchool(id: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/schools/${id}`, {
@@ -14,13 +19,9 @@ async function getSchool(id: string) {
   return res.json();
 }
 
-export default async function SchoolDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-
-  const school = await getSchool(params.id);
+export default async function SchoolDetailPage({ params }: Props) {
+ const { id } = params;
+  const school = await getSchool(id);
 
   return (
     <div className="min-h-screen px-4 pt-20 pb-12 bg-gradient-to-br from-blue-50 to-white">
