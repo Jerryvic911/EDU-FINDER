@@ -3,11 +3,22 @@ export const dynamic = 'force-dynamic';
 import Navbar from '@/app/components/Navbar';
 import React from 'react';
 
-interface Props {
-  params: { id: string };
+interface School {
+  _id: string;
+  name: string;
+  location: string;
+  aboutSchool: string;
+  cutOffMark: number;
+  schoolFees: number;
+  accommodation?: {
+    hostel: number;
+    feeding: number;
+  };
+  courses?: string[];
+  hasPostUtme: boolean;
 }
 
-async function getSchool(id: string) {
+async function getSchool(id: string): Promise<School> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/schools/${id}`, {
     cache: 'no-store',
   });
@@ -19,13 +30,16 @@ async function getSchool(id: string) {
   return res.json();
 }
 
-export default async function SchoolDetailPage({ params }: Props) {
- const { id } = params;
-  const school = await getSchool(id);
+export default async function SchoolDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const school = await getSchool(params.id);
 
   return (
     <div className="min-h-screen px-4 pt-20 pb-12 bg-gradient-to-br from-blue-50 to-white">
-      <Navbar/>
+      <Navbar />
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-6 sm:p-10">
         <h1 className="text-3xl sm:text-4xl font-bold text-blue-900 mb-2">{school.name}</h1>
         <p className="text-gray-600 mb-1 text-lg">📍 {school.location}</p>
@@ -51,14 +65,13 @@ export default async function SchoolDetailPage({ params }: Props) {
           <div className="bg-indigo-100 p-4 rounded-xl col-span-1 sm:col-span-2">
             <p className="text-sm text-gray-600 mb-2">Courses Offered</p>
             <ul className="list-disc list-inside text-base font-medium text-indigo-800 space-y-1">
-              {school.courses?.length > 0 ? (
-                school.courses.map((course: string, index: number) => (
-                  <li key={index}>{course}</li>
-                ))
+              {Array.isArray(school.courses) && school.courses.length > 0 ? (
+                school.courses.map((course, index) => <li key={index}>{course}</li>)
               ) : (
                 <li>N/A</li>
               )}
             </ul>
+
           </div>
 
           <div className="bg-gray-100 p-4 rounded-xl">
