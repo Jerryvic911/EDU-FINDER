@@ -1,7 +1,7 @@
+// src/app/school/[id]/page.tsx
 export const dynamic = 'force-dynamic';
 
 import Navbar from '@/app/components/Navbar';
-import React from 'react';
 
 interface School {
   _id: string;
@@ -23,19 +23,15 @@ async function getSchool(id: string): Promise<School> {
     cache: 'no-store',
   });
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch school');
-  }
-
+  if (!res.ok) throw new Error('Failed to fetch school');
   return res.json();
 }
 
-export default async function SchoolDetailPage({
-  params,
-}: {
-  params: { id: string };
+export default async function SchoolDetailPage(props: {
+  params: Promise<{ id: string }>;
 }) {
-  const school = await getSchool(params.id);
+  const { id } = await props.params;
+  const school = await getSchool(id);
 
   return (
     <div className="min-h-screen px-4 pt-20 pb-12 bg-gradient-to-br from-blue-50 to-white">
@@ -56,11 +52,11 @@ export default async function SchoolDetailPage({
           </div>
           <div className="bg-yellow-100 p-4 rounded-xl">
             <p className="text-sm text-gray-600">Hostel</p>
-            <p className="text-xl font-semibold text-yellow-800">₦{school.accommodation?.hostel}</p>
+            <p className="text-xl font-semibold text-yellow-800">₦{school.accommodation?.hostel ?? 'N/A'}</p>
           </div>
           <div className="bg-pink-100 p-4 rounded-xl">
             <p className="text-sm text-gray-600">Feeding</p>
-            <p className="text-xl font-semibold text-pink-800">₦{school.accommodation?.feeding}</p>
+            <p className="text-xl font-semibold text-pink-800">₦{school.accommodation?.feeding ?? 'N/A'}</p>
           </div>
           <div className="bg-indigo-100 p-4 rounded-xl col-span-1 sm:col-span-2">
             <p className="text-sm text-gray-600 mb-2">Courses Offered</p>
@@ -71,9 +67,7 @@ export default async function SchoolDetailPage({
                 <li>N/A</li>
               )}
             </ul>
-
           </div>
-
           <div className="bg-gray-100 p-4 rounded-xl">
             <p className="text-sm text-gray-600">Post-UTME Required</p>
             <p className="text-lg font-semibold text-gray-800">
