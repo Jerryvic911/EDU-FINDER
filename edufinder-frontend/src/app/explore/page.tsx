@@ -47,7 +47,7 @@ function ExplorePage() {
         return school.location.toLowerCase().includes(lowerSearch);
       }
       if (filterBy === 'cutOffMark') {
-        return school.cutOffMark >= Number(search); // return those >= entered score
+        return school.cutOffMark <= Number(search); // return those >= entered score
       }
         if (filterBy === 'courses') {
         return school.courses.some(course => course.toLowerCase().includes(lowerSearch));
