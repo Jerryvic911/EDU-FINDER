@@ -1,9 +1,6 @@
 import Navbar from '@/app/components/Navbar';
 import React from 'react';
 
-interface Props {
-  params: { id: string };
-}
 
 async function getSchool(id: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/schools/${id}`, {
@@ -17,7 +14,12 @@ async function getSchool(id: string) {
   return res.json();
 }
 
-export default async function SchoolDetailPage({ params }: Props) {
+export default async function SchoolDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+
   const school = await getSchool(params.id);
 
   return (
