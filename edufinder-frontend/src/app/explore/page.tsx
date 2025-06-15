@@ -41,7 +41,7 @@ function ExplorePage() {
     const filtered = schools.filter((school) => {
       if (filterBy === 'name') return school.name.toLowerCase().includes(lowerSearch);
       if (filterBy === 'location') return school.location.toLowerCase().includes(lowerSearch);
-      if (filterBy === 'cutOffMark') return school.cutOffMark >= Number(search);
+      if (filterBy === 'cutOffMark') return school.cutOffMark <= Number(search);
       if (filterBy === 'courses') return school.courses.some(course => course.toLowerCase().includes(lowerSearch));
       return true;
     });
